@@ -28,3 +28,8 @@ func MakeBlock(timestamp, data, hash, lastHash string) Block {
 
     }
 }
+
+func GenerateGenesisBlock() Block {
+    return MakeBlock("Genesis Block", "first data", "genesis-hash", "123")
+
+}
