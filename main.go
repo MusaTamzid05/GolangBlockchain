@@ -8,8 +8,8 @@ import  (
 
 func main() {
     firstBlock := lib.GenerateGenesisBlock()
-    fmt.Println(firstBlock)
-    block := lib.MakeBlock("timestamp", "data", "hash", "last hash")
+    block := lib.MineBlock(firstBlock, "some data")
+
     fmt.Println(block.String())
 
 }

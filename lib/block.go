@@ -31,5 +31,14 @@ func MakeBlock(timestamp, data, hash, lastHash string) Block {
 
 func GenerateGenesisBlock() Block {
     return MakeBlock("Genesis Block", "first data", "genesis-hash", "123")
+}
+
+
+func MineBlock(lastBlock Block, data string) Block {
+    timestamp := "new timestamp"
+    lastHash := lastBlock.Hash
+    hash := "Todo hash"
+
+    return MakeBlock(timestamp, data, hash, lastHash)
 
 }
