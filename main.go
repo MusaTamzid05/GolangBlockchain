@@ -8,8 +8,10 @@ import  (
 
 func main() {
     firstBlock := lib.GenerateGenesisBlock()
+
     block := lib.MineBlock(firstBlock, "some data")
 
+    fmt.Println(firstBlock.String())
     fmt.Println(block.String())
 
 }

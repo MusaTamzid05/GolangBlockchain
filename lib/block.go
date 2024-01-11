@@ -1,5 +1,13 @@
 package lib
 
+import (
+    "time"
+    "strconv"
+    "crypto/sha256"
+    "fmt"
+
+)
+
 
 type Block struct {
     Timestamp string
@@ -19,7 +27,10 @@ func (b Block) String() string  {
 
 }
 
-func MakeBlock(timestamp, data, hash, lastHash string) Block {
+func MakeBlock(data, lastHash string) Block {
+    timestamp := strconv.Itoa(int(time.Now().Unix()))
+    hash := GenerateHash(timestamp, data, lastHash)
+
     return Block{
         Timestamp : timestamp,
         Data: data,
@@ -30,15 +41,23 @@ func MakeBlock(timestamp, data, hash, lastHash string) Block {
 }
 
 func GenerateGenesisBlock() Block {
-    return MakeBlock("Genesis Block", "first data", "genesis-hash", "123")
+    return MakeBlock("first data", "123")
 }
 
 
 func MineBlock(lastBlock Block, data string) Block {
-    timestamp := "new timestamp"
     lastHash := lastBlock.Hash
-    hash := "Todo hash"
+    return MakeBlock(data, lastHash)
+}
 
-    return MakeBlock(timestamp, data, hash, lastHash)
+func GenerateHash(timestamp, data, lastHash string) string {
+    hashData := timestamp + data +  lastHash
+
+    hashGenerator := sha256.New()
+    hashGenerator.Write([]byte(hashData))
+
+    result := hashGenerator.Sum(nil)
+    return fmt.Sprintf("%x", result)
+
 
 }
