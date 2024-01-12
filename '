@@ -1,0 +1,6 @@
+package lib
+
+type BlockChain struct {
+    Block []Block
+
+}

@@ -41,7 +41,7 @@ func MakeBlock(data, lastHash string) Block {
 }
 
 func GenerateGenesisBlock() Block {
-    return MakeBlock("first data", "123")
+    return MakeBlock("first Block", "first Data")
 }
 
 

@@ -7,11 +7,8 @@ import  (
 
 
 func main() {
-    firstBlock := lib.GenerateGenesisBlock()
+    blockChain := lib.MakeBlockChain()
+    fmt.Println(blockChain.Blocks[0].String())
 
-    block := lib.MineBlock(firstBlock, "some data")
-
-    fmt.Println(firstBlock.String())
-    fmt.Println(block.String())
 
 }
