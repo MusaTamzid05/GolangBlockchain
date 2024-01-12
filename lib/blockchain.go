@@ -32,3 +32,35 @@ func (b BlockChain) Show() {
 }
 
 
+
+func (b BlockChain) IsValid() bool  {
+    if b.Blocks[0] != GenerateGenesisBlock() {
+        return false
+    }
+
+    for i := 1; i < len(b.Blocks); i += 1 {
+        currentBlock := b.Blocks[i]
+        parentBlock := b.Blocks[i - 1]
+
+        if parentBlock.Hash != currentBlock.LastHash {
+            return false
+        }
+
+
+        currentHash := GenerateHash(
+            currentBlock.Timestamp,
+            currentBlock.Data,
+            currentBlock.LastHash,
+        )
+
+        if currentHash != currentBlock.Hash {
+            return false
+
+        }
+
+    }
+
+
+
+    return true
+}
