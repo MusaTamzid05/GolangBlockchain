@@ -64,3 +64,17 @@ func (b BlockChain) IsValid() bool  {
 
     return true
 }
+
+func (b *BlockChain) Replace(newBlockChain BlockChain) bool {
+    if len(b.Blocks) >= len(newBlockChain.Blocks) {
+        return false
+    }
+
+    if newBlockChain.IsValid() == false {
+        return false
+    }
+
+    b.Blocks = newBlockChain.Blocks
+
+    return true
+}
