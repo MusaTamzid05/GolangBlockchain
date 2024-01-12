@@ -2,13 +2,15 @@ package main
 
 import  (
     "musa.io/simple_blockchain/lib"
-    "fmt"
+    //"fmt"
 )
 
 
 func main() {
     blockChain := lib.MakeBlockChain()
-    fmt.Println(blockChain.Blocks[0].String())
+    blockChain.Add("data2")
+
+    blockChain.Show()
 
 
 }
