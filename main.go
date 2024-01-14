@@ -2,11 +2,29 @@ package main
 
 import  (
     "musa.io/simple_blockchain/lib"
-    "fmt"
+    //"fmt"
+    "github.com/gin-gonic/gin"
+    "net/http"
 )
 
+var chain lib.BlockChain
+
+func init() {
+    chain = lib.MakeBlockChain()
+}
+
+
+
+func GetBlockChainHandler(c *gin.Context) {
+    blocks := chain.Blocks
+    c.IndentedJSON(http.StatusOK, blocks)
+
+
+
+}
 
 func main() {
+    /*
     blockChain := lib.MakeBlockChain()
     blockChain.Add("data2")
     blockChain.Add("data3")
@@ -22,6 +40,12 @@ func main() {
     fmt.Println(blockChain.Replace(bc2))
 
     blockChain.Show()
+    */
+
+
+    router := gin.Default()
+    router.GET("/blocks", GetBlockChainHandler)
+    router.Run()
 
 
 
