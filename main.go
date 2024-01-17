@@ -11,16 +11,15 @@ type RequestData struct {
     Data string `json:"data"`
 }
 
-var chain lib.BlockChain
 
 func init() {
-    chain = lib.MakeBlockChain()
+    lib.CurrentBlockchain = lib.MakeBlockChain()
 }
 
 
 
 func GetBlockChainHandler(c *gin.Context) {
-    blocks := chain.Blocks
+    blocks := lib.CurrentBlockchain.Blocks
     c.IndentedJSON(http.StatusOK, blocks)
 }
 
@@ -38,7 +37,7 @@ func MineBlockHandler(c *gin.Context) {
         return
     }
 
-    chain.Add(requestData.Data)
+    lib.CurrentBlockchain.Add(requestData.Data)
 
     c.JSON(http.StatusCreated, gin.H {
         "success" : true,
