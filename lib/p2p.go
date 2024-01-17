@@ -3,6 +3,7 @@ package lib
 import (
     "net"
     "fmt"
+    "encoding/gob"
 )
 
 type P2P struct {
@@ -53,14 +54,22 @@ func (p *P2P) ListenToPeer(peer net.Conn, isServer bool) {
     defer peer.Close()
 
     if isServer {
-        // @TODO : send blockchain data to the conneted peer
+        p.Send(peer, CurrentBlockchain)
 
     }
 
     for peerRunning {
 
     }
+}
 
+func (p *P2P) Send(peer net.Conn, blockchain BlockChain) {
+    encoder := gob.NewEncoder(peer)
+    err := encoder.Encode(blockchain)
 
+    if err != nil {
+        fmt.Println("Error sending blockchain ", err.Error())
+
+    }
 
 }
