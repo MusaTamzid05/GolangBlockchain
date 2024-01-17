@@ -2,9 +2,10 @@ package main
 
 import  (
     "musa.io/simple_blockchain/lib"
-    //"fmt"
+    "fmt"
     "github.com/gin-gonic/gin"
     "net/http"
+    "os"
 )
 
 type RequestData struct {
@@ -65,6 +66,17 @@ func main() {
 
     blockChain.Show()
     */
+
+    var err error
+    lib.CurrentP2P, err = lib.MakeP2P(":5001")
+
+    if err != nil {
+        fmt.Println("Error running P2P Server ", err.Error())
+        os.Exit(1)
+    }
+
+    go lib.CurrentP2P.StartServer()
+
 
 
     router := gin.Default()
