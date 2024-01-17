@@ -40,8 +40,9 @@ func (p *P2P) StartServer() {
             continue
         }
 
-        fmt.Println("Peer connected ", peer.LocalAddr())
+        fmt.Println("Peer connected ", peer.RemoteAddr()) // @TODO Fix the addr value
         p.peers = append(p.peers, peer)
+        go p.ListenToPeer(peer, true)
 
     }
 }
@@ -59,6 +60,17 @@ func (p *P2P) ListenToPeer(peer net.Conn, isServer bool) {
     }
 
     for peerRunning {
+        var peerBlockChain BlockChain
+        decoder := gob.NewDecoder(peer)
+        decoder.Decode(&peerBlockChain)
+
+        peerBlockChain.Show()
+
+        flag := CurrentBlockchain.Replace(peerBlockChain)
+
+        if flag {
+            fmt.Println("Blockchain replace with peer ", peer.RemoteAddr())
+        }
 
     }
 }
@@ -71,5 +83,26 @@ func (p *P2P) Send(peer net.Conn, blockchain BlockChain) {
         fmt.Println("Error sending blockchain ", err.Error())
 
     }
+}
+
+func (p *P2P) AddPeers(peerAddrs []string) {
+    for _, peerAddr  := range peerAddrs {
+        //  normal client creation in golang
+        peer, err := net.Dial("tcp", peerAddr)
+
+        if err != nil {
+            fmt.Println("Peer Add error ", peer.LocalAddr(), " ", err.Error())
+            continue
+
+        }
+
+        p.peers = append(p.peers, peer)
+        p.ListenToPeer(peer, false)
+    }
 
 }
+
+
+
+
+

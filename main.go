@@ -7,6 +7,7 @@ import  (
     "net/http"
     "os"
     "flag"
+    "strings"
 )
 
 type RequestData struct {
@@ -52,6 +53,7 @@ func MineBlockHandler(c *gin.Context) {
 func main() {
     hostAddr := flag.String("host", "", "http server")
     p2pServer := flag.String("p2pServer", "", "p2p server")
+    peerAddrs := flag.String("peerAddrs", "", "addr of peers")
 
     flag.Parse()
 
@@ -76,6 +78,13 @@ func main() {
     }
 
     go lib.CurrentP2P.StartServer()
+
+    if *peerAddrs != "" {
+        peerLists := strings.Split(*peerAddrs, ",")
+        go lib.CurrentP2P.AddPeers(peerLists)
+
+    }
+
 
 
 
