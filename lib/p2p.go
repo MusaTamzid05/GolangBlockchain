@@ -85,7 +85,7 @@ func (p *P2P) Send(peer net.Conn, blockchain BlockChain) {
     }
 }
 
-func (p *P2P) AddPeers(peerAddrs []string) {
+func (p*P2P) AddPeers(peerAddrs []string) {
     for _, peerAddr  := range peerAddrs {
         //  normal client creation in golang
         peer, err := net.Dial("tcp", peerAddr)
@@ -93,16 +93,17 @@ func (p *P2P) AddPeers(peerAddrs []string) {
         if err != nil {
             fmt.Println("Peer Add error ", peer.LocalAddr(), " ", err.Error())
             continue
-
         }
 
         p.peers = append(p.peers, peer)
-        p.ListenToPeer(peer, false)
+        fmt.Println("Peer Added ", peerAddr)
+        go p.ListenToPeer(peer, false)
     }
 
 }
 
-
-
-
-
+func (p *P2P) SendToAllPeers(blockchain BlockChain) {
+    for _, peer := range p.peers {
+        p.Send(peer, blockchain)
+    }
+}

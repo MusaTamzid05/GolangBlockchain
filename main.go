@@ -41,6 +41,7 @@ func MineBlockHandler(c *gin.Context) {
     }
 
     lib.CurrentBlockchain.Add(requestData.Data)
+    lib.CurrentP2P.SendToAllPeers(lib.CurrentBlockchain)
 
     c.JSON(http.StatusCreated, gin.H {
         "success" : true,
