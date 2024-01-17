@@ -27,9 +27,23 @@ func (b Block) String() string  {
 
 }
 
-func MakeBlock(data, lastHash string) Block {
-    timestamp := strconv.Itoa(int(time.Now().Unix()))
-    hash := GenerateHash(timestamp, data, lastHash)
+func MakeBlock(data, lastHash string, firstBlock bool) Block {
+
+    timestamp := ""
+    hash := ""
+
+    if firstBlock {
+        timestamp = "Genesis Time"
+        hash = "First Hash"
+
+    } else {
+        timestamp = strconv.Itoa(int(time.Now().Unix()))
+        hash = GenerateHash(timestamp, data, lastHash)
+
+    }
+
+    
+    
 
     return Block{
         Timestamp : timestamp,
@@ -41,13 +55,13 @@ func MakeBlock(data, lastHash string) Block {
 }
 
 func GenerateGenesisBlock() Block {
-    return MakeBlock("first Block", "first Data")
+    return MakeBlock("Genesis Block", "Last Hash", true)
 }
 
 
 func MineBlock(lastBlock Block, data string) Block {
     lastHash := lastBlock.Hash
-    return MakeBlock(data, lastHash)
+    return MakeBlock(data, lastHash, false)
 }
 
 func GenerateHash(timestamp, data, lastHash string) string {
