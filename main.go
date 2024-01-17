@@ -6,6 +6,7 @@ import  (
     "github.com/gin-gonic/gin"
     "net/http"
     "os"
+    "flag"
 )
 
 type RequestData struct {
@@ -49,26 +50,25 @@ func MineBlockHandler(c *gin.Context) {
 
 
 func main() {
-    /*
-    blockChain := lib.MakeBlockChain()
-    blockChain.Add("data2")
-    blockChain.Add("data3")
+    hostAddr := flag.String("host", "", "http server")
+    p2pServer := flag.String("p2pServer", "", "p2p server")
+
+    flag.Parse()
+
+    if *hostAddr == "" {
+        fmt.Println("Please give a host addr for http server Ex -host :8080")
+        os.Exit(1)
+    }
 
 
-    blockChain.Show()
-    bc2 := lib.MakeBlockChain()
-    bc2.Add("data2")
-    bc2.Add("data3")
-    bc2.Add("data4")
+    if *p2pServer == "" {
+        fmt.Println("Please give a host addr for p2p server Ex -p2pServer :5001")
+        os.Exit(1)
+    }
 
-
-    fmt.Println(blockChain.Replace(bc2))
-
-    blockChain.Show()
-    */
 
     var err error
-    lib.CurrentP2P, err = lib.MakeP2P(":5001")
+    lib.CurrentP2P, err = lib.MakeP2P(*p2pServer)
 
     if err != nil {
         fmt.Println("Error running P2P Server ", err.Error())
@@ -82,7 +82,7 @@ func main() {
     router := gin.Default()
     router.GET("/blocks", GetBlockChainHandler)
     router.POST("/mine", MineBlockHandler)
-    router.Run()
+    router.Run(*hostAddr)
 
 
 
