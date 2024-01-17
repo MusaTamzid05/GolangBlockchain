@@ -62,7 +62,16 @@ func (p *P2P) ListenToPeer(peer net.Conn, isServer bool) {
     for peerRunning {
         var peerBlockChain BlockChain
         decoder := gob.NewDecoder(peer)
-        decoder.Decode(&peerBlockChain)
+        err := decoder.Decode(&peerBlockChain)
+
+        if err != nil {
+            if err.Error() == "EOF" {
+                peerRunning = false
+            }
+
+            continue
+
+        }
 
         peerBlockChain.Show()
 
