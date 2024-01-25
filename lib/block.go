@@ -82,22 +82,58 @@ func MineBlock(lastBlock Block, data string) Block {
     }
 
 
+    hashSloved := false
 
-    sloved := false
-
-    for sloved == false {
+    for hashSloved == false {
         hash := GenerateHash(timestamp, data, lastHash, nonce, difficulty)
 
         if hash[:difficulty] == firstZeroes {
-            sloved = true
+            hashSloved = true
             continue
         }
 
         nonce += 1
-
     }
 
-    return MakeBlock(timestamp, data, lastHash, nonce, difficulty,  false)
+    mininingTime := int(time.Now().Unix()) - timestamp
+
+    if mininingTime > MINING_TIME_SECONDS {
+        difficulty -= 1
+        fmt.Println("Difficulty decrease")
+    } else {
+
+        difficulty += 1
+        fmt.Println("Difficulty increase")
+    }
+
+    firstZeroes = ""
+    nonce = 0
+
+    for i := 0; i < difficulty; i += 1 {
+        firstZeroes += "0"
+    }
+
+    var block Block
+
+    blockGenerated := false
+
+    for blockGenerated == false {
+        block = MakeBlock(timestamp, data, lastHash, nonce, difficulty,  false)
+
+        hash := block.Hash
+
+        if hash[:difficulty] == firstZeroes {
+            blockGenerated = true
+            continue
+            
+        }
+
+        nonce += 1
+    }
+
+
+
+    return block
 }
 
 func GenerateHash(timestamp int, data, lastHash string, nonce, difficulty int) string {
