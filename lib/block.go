@@ -2,7 +2,7 @@ package lib
 
 import (
     "time"
-    "strconv"
+    //"strconv"
     "crypto/sha256"
     "fmt"
 
@@ -10,7 +10,7 @@ import (
 
 
 type Block struct {
-    Timestamp string
+    Timestamp int
     Data string
     Hash string
     LastHash string
@@ -19,7 +19,7 @@ type Block struct {
 
 func (b Block) String() string  {
     str := "\n\tBlock\n"
-    str += "Timestamp : " + b.Timestamp + "\n"
+    str += fmt.Sprintf("%s%d\n", str, b.Timestamp)
     str += "Data : " + b.Data+ "\n"
     str += "Hash : " + b.Hash+ "\n"
     str += "Last Hash: " + b.LastHash+ "\n"
@@ -28,19 +28,17 @@ func (b Block) String() string  {
 
 }
 
-func MakeBlock(data, lastHash string, nonce int, firstBlock bool) Block {
+func MakeBlock(timestamp int, data, lastHash string, nonce int, firstBlock bool) Block {
 
     // 000
 
-    timestamp := ""
     hash := ""
 
     if firstBlock {
-        timestamp = "Genesis Time"
         hash = "First Hash"
 
     } else {
-        timestamp = strconv.Itoa(int(time.Now().Unix()))
+        //timestamp = strconv.Itoa(int(time.Now().Unix()))
         hash = GenerateHash(timestamp, data, lastHash, nonce)
 
     }
@@ -59,13 +57,13 @@ func MakeBlock(data, lastHash string, nonce int, firstBlock bool) Block {
 }
 
 func GenerateGenesisBlock() Block {
-    return MakeBlock("Genesis Block", "Last Hash", 0, true)
+    return MakeBlock(0, "Genesis Block", "Last Hash", 0, true)
 }
 
 
 func MineBlock(lastBlock Block, data string) Block {
     lastHash := lastBlock.Hash
-    timestamp := strconv.Itoa(int(time.Now().Unix()))
+    timestamp := int(time.Now().Unix())
 
     firstZeroes := ""
     nonce := 0
@@ -89,12 +87,12 @@ func MineBlock(lastBlock Block, data string) Block {
 
     }
 
-    return MakeBlock(data, lastHash, nonce,  false)
+    return MakeBlock(timestamp, data, lastHash, nonce,  false)
 }
 
-func GenerateHash(timestamp, data, lastHash string, nonce int) string {
+func GenerateHash(timestamp int, data, lastHash string, nonce int) string {
     //hashData := timestamp + data +  lastHash
-    hashData := fmt.Sprintf("%s%s%s%d", timestamp, data, lastHash, nonce)
+    hashData := fmt.Sprintf("%d%s%s%d", timestamp, data, lastHash, nonce)
 
     hashGenerator := sha256.New()
     hashGenerator.Write([]byte(hashData))
