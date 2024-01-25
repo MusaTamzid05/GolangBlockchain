@@ -2,7 +2,6 @@ package lib
 
 import (
     "time"
-    //"strconv"
     "crypto/sha256"
     "fmt"
 
@@ -15,6 +14,7 @@ type Block struct {
     Hash string
     LastHash string
     Nonce int
+    Difficulty int
 }
 
 func (b Block) String() string  {
@@ -23,12 +23,14 @@ func (b Block) String() string  {
     str += "Data : " + b.Data+ "\n"
     str += "Hash : " + b.Hash+ "\n"
     str += "Last Hash: " + b.LastHash+ "\n"
+    str = fmt.Sprintf("%s\nNonce: %d", str, b.Nonce)
+    str = fmt.Sprintf("%s\nDifficulty: %d", str, b.Difficulty)
 
     return str
 
 }
 
-func MakeBlock(timestamp int, data, lastHash string, nonce int, firstBlock bool) Block {
+func MakeBlock(timestamp int, data, lastHash string, nonce, difficulty int, firstBlock bool) Block {
 
     // 000
 
@@ -39,11 +41,9 @@ func MakeBlock(timestamp int, data, lastHash string, nonce int, firstBlock bool)
 
     } else {
         //timestamp = strconv.Itoa(int(time.Now().Unix()))
-        hash = GenerateHash(timestamp, data, lastHash, nonce)
+        hash = GenerateHash(timestamp, data, lastHash, nonce, difficulty)
 
     }
-
-    
     
 
     return Block{
@@ -52,33 +52,43 @@ func MakeBlock(timestamp int, data, lastHash string, nonce int, firstBlock bool)
         Hash: hash,
         LastHash: lastHash,
         Nonce: nonce,
+        Difficulty: difficulty,
 
     }
 }
 
 func GenerateGenesisBlock() Block {
-    return MakeBlock(0, "Genesis Block", "Last Hash", 0, true)
+    return MakeBlock(0, "Genesis Block", "Last Hash", 0, DEFAULT_DIFFICULTY, true)
 }
 
 
 func MineBlock(lastBlock Block, data string) Block {
+
+    // Find out the difficulty
+    // if Find out the time to find difficulty
+    // if difficulty > min_time = difficulty - 1
+    // else difficulty += 1
+    // generate the block with this difficulty
+
     lastHash := lastBlock.Hash
     timestamp := int(time.Now().Unix())
+    difficulty := lastBlock.Difficulty
 
     firstZeroes := ""
     nonce := 0
 
-    for i := 0; i < DIFFICULTY; i += 1 {
+    for i := 0; i < difficulty; i += 1 {
         firstZeroes += "0"
     }
+
 
 
     sloved := false
 
     for sloved == false {
-        hash := GenerateHash(timestamp, data, lastHash, nonce)
+        hash := GenerateHash(timestamp, data, lastHash, nonce, difficulty)
 
-        if hash[:DIFFICULTY] == firstZeroes {
+        if hash[:difficulty] == firstZeroes {
             sloved = true
             continue
         }
@@ -87,12 +97,12 @@ func MineBlock(lastBlock Block, data string) Block {
 
     }
 
-    return MakeBlock(timestamp, data, lastHash, nonce,  false)
+    return MakeBlock(timestamp, data, lastHash, nonce, difficulty,  false)
 }
 
-func GenerateHash(timestamp int, data, lastHash string, nonce int) string {
+func GenerateHash(timestamp int, data, lastHash string, nonce, difficulty int) string {
     //hashData := timestamp + data +  lastHash
-    hashData := fmt.Sprintf("%d%s%s%d", timestamp, data, lastHash, nonce)
+    hashData := fmt.Sprintf("%d%s%s%d%d", timestamp, data, lastHash, nonce, difficulty)
 
     hashGenerator := sha256.New()
     hashGenerator.Write([]byte(hashData))

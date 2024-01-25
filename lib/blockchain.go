@@ -52,6 +52,7 @@ func (b BlockChain) IsValid() bool  {
             currentBlock.Data,
             currentBlock.LastHash,
             currentBlock.Nonce,
+            currentBlock.Difficulty,
         )
 
         if currentHash != currentBlock.Hash {
