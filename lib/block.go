@@ -14,6 +14,7 @@ type Block struct {
     Data string
     Hash string
     LastHash string
+    Nonce int
 }
 
 func (b Block) String() string  {
@@ -27,7 +28,9 @@ func (b Block) String() string  {
 
 }
 
-func MakeBlock(data, lastHash string, firstBlock bool) Block {
+func MakeBlock(data, lastHash string, nonce int, firstBlock bool) Block {
+
+    // 000
 
     timestamp := ""
     hash := ""
@@ -38,7 +41,7 @@ func MakeBlock(data, lastHash string, firstBlock bool) Block {
 
     } else {
         timestamp = strconv.Itoa(int(time.Now().Unix()))
-        hash = GenerateHash(timestamp, data, lastHash)
+        hash = GenerateHash(timestamp, data, lastHash, nonce)
 
     }
 
@@ -50,22 +53,48 @@ func MakeBlock(data, lastHash string, firstBlock bool) Block {
         Data: data,
         Hash: hash,
         LastHash: lastHash,
+        Nonce: nonce,
 
     }
 }
 
 func GenerateGenesisBlock() Block {
-    return MakeBlock("Genesis Block", "Last Hash", true)
+    return MakeBlock("Genesis Block", "Last Hash", 0, true)
 }
 
 
 func MineBlock(lastBlock Block, data string) Block {
     lastHash := lastBlock.Hash
-    return MakeBlock(data, lastHash, false)
+    timestamp := strconv.Itoa(int(time.Now().Unix()))
+
+    firstZeroes := ""
+    nonce := 0
+
+    for i := 0; i < DIFFICULTY; i += 1 {
+        firstZeroes += "0"
+    }
+
+
+    sloved := false
+
+    for sloved == false {
+        hash := GenerateHash(timestamp, data, lastHash, nonce)
+
+        if hash[:DIFFICULTY] == firstZeroes {
+            sloved = true
+            continue
+        }
+
+        nonce += 1
+
+    }
+
+    return MakeBlock(data, lastHash, nonce,  false)
 }
 
-func GenerateHash(timestamp, data, lastHash string) string {
-    hashData := timestamp + data +  lastHash
+func GenerateHash(timestamp, data, lastHash string, nonce int) string {
+    //hashData := timestamp + data +  lastHash
+    hashData := fmt.Sprintf("%s%s%s%d", timestamp, data, lastHash, nonce)
 
     hashGenerator := sha256.New()
     hashGenerator.Write([]byte(hashData))

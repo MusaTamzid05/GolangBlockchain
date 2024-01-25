@@ -51,6 +51,7 @@ func (b BlockChain) IsValid() bool  {
             currentBlock.Timestamp,
             currentBlock.Data,
             currentBlock.LastHash,
+            currentBlock.Nonce,
         )
 
         if currentHash != currentBlock.Hash {
